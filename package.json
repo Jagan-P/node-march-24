@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "express": "^4.17.1",
     "pdfkit": "^0.12.1"
   },
   "devDependencies": {},
