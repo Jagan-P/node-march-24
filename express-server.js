@@ -19,6 +19,8 @@ const upload = multer();
 app.use(bodyParser.json());
 // app.use(express.json());
 
+app.set('view engine', 'pug')
+
 app.use(function (req, res, next) {
   console.log('Time:', Date.now())
   console.log(req.headers);
@@ -31,7 +33,11 @@ app.use('/user/:id', function (req, res, next) {
 })
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  // res.send('Hello World!')
+  // queryresults
+  // res.render('index', { title: 'Hey', message: 'Hello there!' })
+
+  res.sendFile("D:/Playground/node-march-24/custom.html");
 })
 
 app.get('/users',(req,res)=>{
