@@ -14,34 +14,69 @@ const port = 3000
 var bodyParser = require('body-parser')
 const multer = require('multer');
 const upload = multer();
-// app.use(bodyParser.urlencoded())
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+app.use(bodyParser.urlencoded())
 // app.use(bodyParser.raw({}));
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 // app.use(express.json());
+
+app.use(express.static('public'));
 
 app.set('view engine', 'pug')
 
+app.use(cookieParser());
+app.use(session({secret: "Shh, its a secret!"}));
+
 app.use(function (req, res, next) {
-  console.log('Time:', Date.now())
-  console.log(req.headers);
-  next()
+  // console.log('Time:', Date.now())
+  // console.log(req.headers);
+  console.log(req.originalUrl);
+  if(req.session.username=="jagan" || req.originalUrl=="/login") {
+    next()
+  }
+  else {
+    res.redirect("/login.html");
+  }
 })
 
 app.use('/user/:id', function (req, res, next) {
-  console.log('Request Type:', req.method)
+  // console.log('Request Type:', req.method)
   next()
 })
+
+app.post("/login",
+ function(req, res) {
+  console.log(req.body);
+  if(req.body.username=="jagan" && req.body.pin=="1234") {
+    req.session.username="jagan";
+    res.redirect("/users");
+  }
+  else {
+    res.redirect("/login.html");
+  }
+});
 
 app.get('/', (req, res) => {
   // res.send('Hello World!')
   // queryresults
   // res.render('index', { title: 'Hey', message: 'Hello there!' })
 
-  res.sendFile("D:/Playground/node-march-24/custom.html");
+  // res.sendFile("D:/Playground/node-march-24/custom.html");
+  res.cookie("username", "ABC").send("Cookies are set");
 })
 
 app.get('/users',(req,res)=>{
-    res.send("users");
+    // console.log(req.cookies)
+    console.log(req.session.page_views)
+    if(req.session.page_views){
+      req.session.page_views++;
+      res.send("You visited this page " + req.session.page_views + " times");
+   } else {
+      req.session.page_views = 1;
+      res.send("Welcome to this page for the first time!");
+   }
+    // res.send("users");
 });
 
 app.post('/users'
