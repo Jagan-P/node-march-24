@@ -16,9 +16,12 @@ const multer = require('multer');
 const upload = multer();
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
-app.use(bodyParser.urlencoded())
+var jwt = require('jsonwebtoken');
+var cors = require('cors')
+app.use(cors())
+// app.use(bodyParser.urlencoded())
 // app.use(bodyParser.raw({}));
-// app.use(bodyParser.json());
+app.use(bodyParser.json());
 // app.use(express.json());
 
 app.use(express.static('public'));
@@ -31,7 +34,7 @@ app.use(session({secret: "Shh, its a secret!"}));
 app.use(function (req, res, next) {
   // console.log('Time:', Date.now())
   // console.log(req.headers);
-  console.log(req.originalUrl);
+  console.log(req.headers.authorization);
   if(req.session.username=="jagan" || req.originalUrl=="/login") {
     next()
   }
@@ -48,12 +51,18 @@ app.use('/user/:id', function (req, res, next) {
 app.post("/login",
  function(req, res) {
   console.log(req.body);
+  // if(req.body.username=="jagan" && req.body.pin=="1234") {
+  //   req.session.username="jagan";
+  //   res.redirect("/users");
+  // }
+  // else {
+  //   res.redirect("/login.html");
+  // }
+
   if(req.body.username=="jagan" && req.body.pin=="1234") {
-    req.session.username="jagan";
-    res.redirect("/users");
-  }
-  else {
-    res.redirect("/login.html");
+    var token = jwt.sign({username: req.body.username}, 'shhhhh');
+    console.log(typeof(token), token);
+    res.type('plain/text').send(token);
   }
 });
 
