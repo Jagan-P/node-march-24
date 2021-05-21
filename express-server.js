@@ -34,12 +34,18 @@ app.use(session({secret: "Shh, its a secret!"}));
 app.use(function (req, res, next) {
   // console.log('Time:', Date.now())
   // console.log(req.headers);
-  console.log(req.headers.authorization);
-  if(req.session.username=="jagan" || req.originalUrl=="/login") {
+  // console.log(req.headers.authorization.replace("Bearer "));
+
+  let decodedData;
+  if(req.headers.authorization) {
+    decodedData = jwt.verify(req.headers.authorization.replace("Bearer ", ""), 'shhhhh')
+  }
+  if(decodedData && decodedData.username=="jagan" || req.originalUrl=="/login") {
     next()
   }
   else {
-    res.redirect("/login.html");
+    // res.redirect("/login.html");
+    res.sendStatus(401).send("You are not authorized");
   }
 })
 
