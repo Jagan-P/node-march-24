@@ -18,6 +18,8 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var jwt = require('jsonwebtoken');
 var cors = require('cors')
+const mongoose = require('mongoose');
+const Cat = require('./mongoose-models').Cat;
 app.use(cors())
 // app.use(bodyParser.urlencoded())
 // app.use(bodyParser.raw({}));
@@ -36,17 +38,18 @@ app.use(function (req, res, next) {
   // console.log(req.headers);
   // console.log(req.headers.authorization.replace("Bearer "));
 
-  let decodedData;
-  if(req.headers.authorization) {
-    decodedData = jwt.verify(req.headers.authorization.replace("Bearer ", ""), 'shhhhh')
-  }
-  if(decodedData && decodedData.username=="jagan" || req.originalUrl=="/login") {
-    next()
-  }
-  else {
-    // res.redirect("/login.html");
-    res.sendStatus(401).send("You are not authorized");
-  }
+  // let decodedData;
+  // if(req.headers.authorization) {
+  //   decodedData = jwt.verify(req.headers.authorization.replace("Bearer ", ""), 'shhhhh')
+  // }
+  // if(decodedData && decodedData.username=="jagan" || req.originalUrl=="/login") {
+  //   next()
+  // }
+  // else {
+  //   // res.redirect("/login.html");
+  //   res.sendStatus(401).send("You are not authorized");
+  // }
+  next();
 })
 
 app.use('/user/:id', function (req, res, next) {
@@ -104,6 +107,15 @@ app.post('/users'
 app.use('/users', function (req, res, next) {
   console.log('End', req.method)
   next()
+})
+
+app.get('/cats', function (req, res) {
+  Cat.find({
+  }, (err, data)=>{
+    console.log(err, data);
+    
+    res.send(data);
+  })
 })
 
 app.listen(port, () => {
