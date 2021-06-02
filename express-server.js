@@ -118,6 +118,27 @@ app.get('/cats', function (req, res) {
   })
 })
 
+app.post('/cats', function (req, res) {
+  console.log(req.body);
+
+  let cat = new Cat(req.body);
+
+  cat.save((err, data)=>{
+    console.log(err, data);
+
+    res.send(data);
+  })
+})
+
+app.delete('/cats/:id', function(req, res) {
+  console.log("data",req.params.id);
+  Cat.findOneAndDelete({
+    _id: req.params.id
+  }, (err, data)=>{
+    res.send(data);
+  })
+})
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
